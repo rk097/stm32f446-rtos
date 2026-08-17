@@ -1,0 +1,3 @@
+C:/Users/ryddk/OneDrive/Documents/stm32-baremetal-proj/build/CMakeFiles/firmware.dir
+C:/Users/ryddk/OneDrive/Documents/stm32-baremetal-proj/build/CMakeFiles/edit_cache.dir
+C:/Users/ryddk/OneDrive/Documents/stm32-baremetal-proj/build/CMakeFiles/rebuild_cache.dir
