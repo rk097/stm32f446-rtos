@@ -6,6 +6,7 @@ project(stm32f446_rtos
 
 add_executable(firmware
     src/main.c
+    startup/startup.c
 )
 
 target_compile_options(firmware PRIVATE
@@ -17,4 +18,5 @@ target_link_options(firmware PRIVATE
     -mcpu=cortex-m4
     -mthumb
     -nostartfiles
+    -T${CMAKE_SOURCE_DIR}/linker/stm32f446re.ld
 )
