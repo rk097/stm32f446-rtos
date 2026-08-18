@@ -9,8 +9,9 @@ extern uint32_t _edata;
 extern uint32_t _sbss;
 extern uint32_t _ebss;
 
-/* Reset handler declaration */
+/* Forward declaration */
 void Reset_Handler(void);
+extern void SysTick_Handler(void);
 
 /*
  * Top of SRAM for STM32F446RE:
@@ -24,7 +25,8 @@ __attribute__((section(".isr_vector")))
 const uint32_t vector_table[] =
 {
     STACK_TOP,
-    (uint32_t)Reset_Handler
+    (uint32_t)Reset_Handler,
+    [15] = (uint32_t)SysTick_Handler
 };
 
 void Reset_Handler(void)
