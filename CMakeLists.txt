@@ -20,3 +20,7 @@ target_link_options(firmware PRIVATE
     -nostartfiles
     -T${CMAKE_SOURCE_DIR}/linker/stm32f446re.ld
 )
+
+target_include_directories(firmware PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
