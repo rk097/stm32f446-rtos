@@ -2,6 +2,12 @@
 
 A from-scratch Cortex-M4 runtime and RTOS targeting the STM32F446RE.
 
+## Important References
+
+[STM32F446 Reference Manual](https://www.st.com/en/microcontrollers-microprocessors/stm32f446/documentation.html#)
+[Nucleo64 User Manual](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf)
+Arm Cortex-M4 Technical Reference Manual (didn't link because there's sometimes better resources for the relevant info)
+
 ## Building
 
 Run once, and whenever build settings change:
