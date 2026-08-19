@@ -29,6 +29,7 @@ const uint32_t vector_table[] =
     [15] = (uint32_t)SysTick_Handler
 };
 
+__attribute__((noreturn))
 void Reset_Handler(void)
 {
     uint32_t* src = &_sidata;

@@ -6,6 +6,7 @@ project(stm32f446_rtos
 
 add_executable(firmware
     src/main.c
+    src/systick.c
     startup/startup.c
 )
 
