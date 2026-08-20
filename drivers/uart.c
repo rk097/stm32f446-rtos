@@ -14,6 +14,7 @@ void USART2_Init() {
     GPIOA_AFRL |= (0b111 << 8);
     GPIOA_AFRL |= (0b111 << 12); // enable alt function USART2
     // for baud rate, we use the formula to get 11 for frac and 8 for mantissa
+    // 115200bps 8N1
     USART2_BRR = ((0x8 << 4) | 11);
     USART2_CR1 |= (0b11 << 2); // enable tx and rx
     USART2_CR1 |= (1 << 13); // enable peripheral.
