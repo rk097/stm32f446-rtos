@@ -2,5 +2,6 @@
 #define UART_H
 
 void uart_write_char(char c);
+void uart_write(const char* str);
 
 #endif

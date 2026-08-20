@@ -24,7 +24,7 @@ int main(void) {
     USART2_CR1 |= (1 << 13); // enable peripheral.
 
     while (1) {
-        uart_write_char('A');
+        uart_write("Hello world\n");
         GPIOA_BSRR = (1UL << 5);  // LED on
         delay_ms(500);
         GPIOA_BSRR = (1UL << 21); // LED off
