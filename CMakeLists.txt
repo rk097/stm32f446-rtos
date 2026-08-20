@@ -6,8 +6,10 @@ project(stm32f446_rtos
 
 add_executable(firmware
     src/main.c
-    src/systick.c
-    src/uart.c
+    platform/systick.c
+    platform/nucleo.c
+    drivers/uart.c
+    drivers/gpio.c
     startup/startup.c
 )
 
