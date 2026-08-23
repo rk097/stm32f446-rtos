@@ -1,4 +1,5 @@
 #include "uart.h"
+#include "nvic.h"
 #include "stm32f446re.h"
 #include "gpio.h"
 
@@ -17,6 +18,8 @@ void USART2_Init() {
     // 115200bps 8N1
     USART2_BRR = ((0x8 << 4) | 11);
     USART2_CR1 |= (0b11 << 2); // enable tx and rx
+    nvic_enable_USART2_IRQ();
+    USART2_CR1 |= (1 << 5); // enable RX interrupt
     USART2_CR1 |= (1 << 13); // enable peripheral.
 }
 
@@ -28,5 +31,13 @@ void uart_write_char(char c) {
 void uart_write(const char* str) {
     while (*str) {
         uart_write_char(*str++);
+    }
+}
+
+void USART2_IRQ_Handler() {
+    if (USART2_SR & (1 << 5)) {
+        char c = USART2_DR;
+        uart_write("\nReceived: ");
+        uart_write_char(c);
     }
 }

@@ -9,7 +9,6 @@ int main(void) {
     USART2_Init();
 
     while (1) {
-        uart_write("Hello world\n");
         led_on();
         delay_ms(500);
         led_off();

@@ -4,5 +4,6 @@
 void USART2_Init();
 void uart_write_char(char c);
 void uart_write(const char* str);
+void USART2_IRQ_Handler();
 
 #endif

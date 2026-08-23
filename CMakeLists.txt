@@ -8,6 +8,7 @@ add_executable(firmware
     src/main.c
     platform/systick.c
     platform/nucleo.c
+    platform/nvic.c
     drivers/uart.c
     drivers/gpio.c
     startup/startup.c
