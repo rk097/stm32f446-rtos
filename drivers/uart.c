@@ -9,7 +9,7 @@ static uint8_t rx_buf[UART_RX_BUF_SIZE];
 static volatile uint16_t rx_head;
 static volatile uint16_t rx_tail;
 
-void USART2_Init() {
+void USART2_Init(void) {
     GPIOA_Init();
     RCC_APB1ENR |= (1 << 17); // enable USART2 clock
     GPIOA_MODER &= ~(0b11 << 4);
@@ -52,7 +52,7 @@ int uart_read_byte(uint8_t* b) {
     return 1;
 }
 
-void USART2_IRQ_Handler() {
+void USART2_IRQ_Handler(void) {
     if (USART2_SR & (1 << 5)) {
         uint8_t c = USART2_DR;
         uint16_t next_head = (rx_head + 1) % UART_RX_BUF_SIZE;
