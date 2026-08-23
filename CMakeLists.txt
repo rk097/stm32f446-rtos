@@ -28,4 +28,6 @@ target_link_options(firmware PRIVATE
 
 target_include_directories(firmware PRIVATE
     ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/drivers
+    ${CMAKE_SOURCE_DIR}/platform
 )

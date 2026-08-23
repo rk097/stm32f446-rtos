@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+// USART2 is used as the default tied to the virtual COM port
+
 void USART2_Init(void);
 void uart_write_byte(uint8_t b);
 void uart_write_str(const char* str);

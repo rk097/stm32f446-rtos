@@ -32,26 +32,21 @@ const uint32_t vector_table[] =
 };
 
 __attribute__((noreturn))
-void Reset_Handler(void)
-{
+void Reset_Handler(void) {
     uint32_t* src = &_sidata;
     uint32_t* dst = &_sdata;
 
-    while (dst < &_edata)
-    {
+    while (dst < &_edata) {
         *dst++ = *src++;
     }
 
     dst = &_sbss;
 
-    while (dst < &_ebss)
-    {
+    while (dst < &_ebss) {
         *dst++ = 0;
     }
 
     main();
 
-    while (1)
-    {
-    }
+    while (1) {}
 }
