@@ -2,16 +2,18 @@
 #include "systick.h"
 #include "uart.h"
 #include "nucleo.h"
+#include <stdint.h>
 
 int main(void) {
     LED_Init();
     SysTick_Init();
     USART2_Init();
 
+    uint8_t b;
     while (1) {
-        led_on();
-        delay_ms(500);
-        led_off();
-        delay_ms(500);
+        if (uart_read_byte(&b)) {
+            uart_write_str("\r\nReceived: ");
+            uart_write_byte(b);
+        }
     }   
 }

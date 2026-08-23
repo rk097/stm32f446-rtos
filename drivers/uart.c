@@ -3,6 +3,12 @@
 #include "stm32f446re.h"
 #include "gpio.h"
 
+#define UART_RX_BUF_SIZE 128
+
+static uint8_t rx_buf[UART_RX_BUF_SIZE];
+static volatile uint16_t rx_head;
+static volatile uint16_t rx_tail;
+
 void USART2_Init() {
     GPIOA_Init();
     RCC_APB1ENR |= (1 << 17); // enable USART2 clock
@@ -23,21 +29,36 @@ void USART2_Init() {
     USART2_CR1 |= (1 << 13); // enable peripheral.
 }
 
-void uart_write_char(char c) {
+void uart_write_byte(uint8_t b) {
     while (!(USART2_SR & (1 << 7))) {}
-    USART2_DR = c;
+    USART2_DR = b;
 }
 
-void uart_write(const char* str) {
+void uart_write_str(const char* str) {
     while (*str) {
-        uart_write_char(*str++);
+        uart_write_byte(*str++);
     }
+}
+
+/**
+ * Reads one byte if available, or returns 0 if not.
+ * @param b Pointer to uint8_t to store read byte
+ * @return 1 if byte was read, 0 if not
+ */
+int uart_read_byte(uint8_t* b) {
+    if (rx_tail == rx_head) return 0;
+    *b = rx_buf[rx_tail];
+    rx_tail = (rx_tail + 1) % UART_RX_BUF_SIZE;
+    return 1;
 }
 
 void USART2_IRQ_Handler() {
     if (USART2_SR & (1 << 5)) {
-        char c = USART2_DR;
-        uart_write("\nReceived: ");
-        uart_write_char(c);
+        uint8_t c = USART2_DR;
+        uint16_t next_head = (rx_head + 1) % UART_RX_BUF_SIZE;
+        if (next_head != rx_tail) {
+            rx_buf[rx_head] = c;
+            rx_head = next_head;
+        }
     }
 }
