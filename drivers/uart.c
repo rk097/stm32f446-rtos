@@ -4,10 +4,15 @@
 #include "gpio.h"
 
 #define UART_RX_BUF_SIZE 128
+#define UART_TX_BUF_SIZE 128
 
 static uint8_t rx_buf[UART_RX_BUF_SIZE];
 static volatile uint16_t rx_head;
 static volatile uint16_t rx_tail;
+
+static uint8_t tx_buf[UART_TX_BUF_SIZE];
+static volatile uint16_t tx_head;
+static volatile uint16_t tx_tail;
 
 void USART2_Init(void) {
     GPIOA_Init();
@@ -30,9 +35,13 @@ void USART2_Init(void) {
 }
 
 void uart_write_byte(uint8_t b) {
-    while (!(USART2_SR & (1 << 7))) {}
-    USART2_DR = b;
-}
+    uint16_t next_head = (tx_head + 1) % UART_TX_BUF_SIZE;
+    if (next_head != tx_tail) {
+        tx_buf[tx_head] = b;
+        tx_head = next_head;
+        USART2_CR1 |= (1 << 7); // enable TX interrupt only when bytes to send
+    }
+} 
 
 void uart_write_str(const char* str) {
     while (*str) {
@@ -59,6 +68,14 @@ void USART2_IRQ_Handler(void) {
         if (next_head != rx_tail) {
             rx_buf[rx_head] = c;
             rx_head = next_head;
+        }
+    }
+    if (USART2_SR & (1 << 7)) {
+        if (tx_tail == tx_head) {
+            USART2_CR1 &= ~(1 << 7);
+        } else {
+            USART2_DR = tx_buf[tx_tail];
+            tx_tail = (tx_tail + 1) % UART_TX_BUF_SIZE;
         }
     }
 }
