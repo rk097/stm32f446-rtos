@@ -12,6 +12,7 @@ add_executable(firmware
     drivers/uart.c
     drivers/gpio.c
     startup/startup.c
+    kernel/task.c
 )
 
 target_compile_options(firmware PRIVATE
@@ -30,4 +31,5 @@ target_include_directories(firmware PRIVATE
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/drivers
     ${CMAKE_SOURCE_DIR}/platform
+    ${CMAKE_SOURCE_DIR}/kernel
 )
