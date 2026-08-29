@@ -13,6 +13,7 @@ add_executable(firmware
     drivers/gpio.c
     startup/startup.c
     kernel/task.c
+    kernel/context.S
 )
 
 target_compile_options(firmware PRIVATE

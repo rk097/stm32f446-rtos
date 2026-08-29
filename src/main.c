@@ -6,12 +6,15 @@
 #include <stdint.h>
 
 void taskA(void) {
+    /*
     while (1) {
         uart_write_str("Hello from task A\r\n");
         led_on();
         delay_ms(500);
         task_yield();
-    }
+    }*/
+   volatile int x = 123;
+   while (1) {}
 }
 
 void taskB(void) {
@@ -30,5 +33,8 @@ int main(void) {
 
     task_create(taskA);
     task_create(taskB);
+
+    begin_tasks();
+
     while(1) {}
 }

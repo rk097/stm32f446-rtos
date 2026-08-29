@@ -1,5 +1,7 @@
 #include "task.h"
 
+extern void start_task(uint32_t* sp);
+
 #define MAX_TASKS 4
 #define STACK_SIZE 256
 
@@ -14,10 +16,14 @@ void task_init(task_t* task_handle, uint32_t* stack_handle, void (*task_func)(vo
     *--sp = (uint32_t)task_func;
     // fake R11-R4
     for (int i = 11; i >= 4; i--) *--sp = 0;
-    task_handle->sp = sp;
+    task_handle->sp = sp; // points at r4
 }
 
 void task_create(void (*task_func)(void)) {
     task_init(&tasks[num_tasks], task_stacks[num_tasks], task_func);
     num_tasks++;
+}
+
+void begin_tasks(void) {
+    start_task(tasks[0].sp);
 }
