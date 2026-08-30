@@ -1,7 +1,7 @@
 #include "task.h"
 
 extern void start_task(uint32_t* sp);
-extern uint32_t *save_context(void);
+extern void context_switch(uint32_t** old_sp, uint32_t* new_sp);
 
 #define MAX_TASKS 4
 #define STACK_SIZE 256
@@ -9,9 +9,12 @@ extern uint32_t *save_context(void);
 static task_t tasks[MAX_TASKS];
 static uint32_t task_stacks[MAX_TASKS][STACK_SIZE] __attribute__((aligned(8)));
 static uint8_t num_tasks = 0;
+static uint8_t cur_task = 0;
 
 void task_yield(void) {
-    tasks[0].sp = save_context();
+    uint8_t old_task = cur_task;
+    cur_task = (old_task + 1) % num_tasks;
+    context_switch(&tasks[old_task].sp, tasks[cur_task].sp);
 }
 
 void task_init(task_t* task_handle, uint32_t* stack_handle, void (*task_func)(void)) {
@@ -28,5 +31,5 @@ void task_create(void (*task_func)(void)) {
 }
 
 void begin_tasks(void) {
-    start_task(tasks[0].sp);
+    start_task(tasks[cur_task].sp);
 }

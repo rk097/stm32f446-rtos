@@ -2,6 +2,21 @@
 .cpu cortex-m4
 .thumb
 
+.global context_switch
+.type context_switch, %function
+
+context_switch:
+    mrs r2, psp
+    str lr, [r2, #-4]!
+    stmdb r2!, {r4-r11}
+    str r2, [r0]
+
+    ldmia r1!, {r4-r11}
+    ldr lr, [r1], #4
+    msr psp, r1
+
+    bx lr
+
 .global start_task
 .type start_task, %function
 
@@ -16,11 +31,3 @@ start_task:
     isb
 
     bx r1
-
-.global save_context
-.type save_context, %function
-
-save_context:
-    mrs r0, psp
-    stmdb r0!, {r4-r11}
-    bx lr
