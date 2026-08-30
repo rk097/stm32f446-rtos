@@ -7,7 +7,7 @@
 
 start_task:
     ldmia r0!, {r4-r11} /* r0 holds sp as the first arg */
-    ldr r1, [r0], #4 /* LR is the first reg below sp originally */
+    ldr r1, [r0], #4 /* Load task entry which we stored at stack top */
 
     msr psp, r0
 
@@ -16,3 +16,11 @@ start_task:
     isb
 
     bx r1
+
+.global save_context
+.type save_context, %function
+
+save_context:
+    mrs r0, psp
+    stmdb r0!, {r4-r11}
+    bx lr

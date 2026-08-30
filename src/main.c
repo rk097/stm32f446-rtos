@@ -14,6 +14,7 @@ void taskA(void) {
         task_yield();
     }*/
    volatile int x = 123;
+   task_yield();
    while (1) {}
 }
 
