@@ -11,8 +11,10 @@ extern uint32_t _ebss;
 
 /* Forward declaration */
 void Reset_Handler(void);
+extern void SVC_Handler(void);
+extern void PendSV_Handler(void);
 extern void SysTick_Handler(void);
-extern void USART2_IRQ_Handler();
+extern void USART2_IRQ_Handler(void);
 
 /*
  * Top of SRAM for STM32F446RE:
@@ -27,6 +29,8 @@ const uint32_t vector_table[] =
 {
     STACK_TOP,
     (uint32_t)Reset_Handler,
+    [11] = (uint32_t)SVC_Handler,
+    [14] = (uint32_t)PendSV_Handler,
     [15] = (uint32_t)SysTick_Handler,
     [54] = (uint32_t)USART2_IRQ_Handler
 };

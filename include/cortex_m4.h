@@ -11,4 +11,7 @@
 #define NVIC_ISER_BASE 0xE000E100UL
 #define NVIC_ISER1 *(volatile uint32_t*)(NVIC_ISER_BASE + 0x4U)
 
+#define SCB_ICSR (*(volatile uint32_t*)0xE000ED04)
+#define SCB_SHPR3 *(volatile uint32_t*)(0xE000ED20)
+
 #endif

@@ -14,6 +14,7 @@ add_executable(firmware
     startup/startup.c
     kernel/task.c
     kernel/context.S
+    kernel/pendsv.c
 )
 
 target_compile_options(firmware PRIVATE

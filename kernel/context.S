@@ -2,32 +2,36 @@
 .cpu cortex-m4
 .thumb
 
-.global context_switch
-.type context_switch, %function
+.global PendSV_Handler
+.type PendSV_Handler, %function
 
-context_switch:
-    mrs r2, psp
-    str lr, [r2, #-4]!
-    stmdb r2!, {r4-r11}
-    str r2, [r0]
+PendSV_Handler:
+    mrs r0, psp
+    stmdb r0!, {r4-r11}
+    ldr r1, =cur_task_handle
+    ldr r2, [r1]
+    str r0, [r2]
 
-    ldmia r1!, {r4-r11}
-    ldr lr, [r1], #4
-    msr psp, r1
+    ldr r0, =next_task_handle
+    ldr r0, [r0]
+    ldr r2, [r0]
+    ldmia r2!, {r4-r11}
+    msr psp, r2
+
+    str r0, [r1] /* update cur_task_handle to next_task_handle */
 
     bx lr
 
-.global start_task
-.type start_task, %function
+.global SVC_Handler
+.type SVC_Handler, %function
 
-start_task:
-    ldmia r0!, {r4-r11} /* r0 holds sp as the first arg */
-    ldr r1, [r0], #4 /* Load task entry which we stored at stack top */
+SVC_Handler:
+    ldr   r0, =cur_task_handle
+    ldr   r0, [r0]          /* r0 = cur_task_handle */
+    ldr   r0, [r0]          /* r0 = cur_task_handle->sp */
 
-    msr psp, r0
+    ldmia r0!, {r4-r11}
+    msr   psp, r0
 
-    movs r2, #2
-    msr CONTROL, r2
-    isb
-
-    bx r1
+    ldr   lr, =0xFFFFFFFD    /* return to Thread mode using PSP */
+    bx    lr

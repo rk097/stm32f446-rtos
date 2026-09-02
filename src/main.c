@@ -3,6 +3,7 @@
 #include "uart.h"
 #include "nucleo.h"
 #include "task.h"
+#include "pendsv.h"
 #include <stdint.h>
 
 void taskA(void)
@@ -27,6 +28,7 @@ int main(void) {
     LED_Init();
     SysTick_Init();
     USART2_Init();
+    PendSV_Init();
 
     uart_write_str("Creating tasks...\r\n\n");
 
