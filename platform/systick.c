@@ -3,6 +3,8 @@
 
 volatile uint32_t systick_ms = 0;
 
+extern void task_yield(void);
+
 void SysTick_Init(void) {
     SYSTICK_CURRENT = 0;
     SYSTICK_RELOAD = 15999; // 16000 - 1, assuming 16 MHz
@@ -12,6 +14,7 @@ void SysTick_Init(void) {
 void SysTick_Handler(void)
 {
     systick_ms++;
+    task_yield();
 }
 
 void delay_ms(uint32_t delay_length_ms) {

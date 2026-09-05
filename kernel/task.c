@@ -10,14 +10,17 @@ static task_t tasks[MAX_TASKS];
 static uint32_t task_stacks[MAX_TASKS][STACK_SIZE] __attribute__((aligned(8)));
 static uint8_t num_tasks = 0;
 static uint8_t cur_task = 0;
+static uint8_t scheduler_running = 0;
 
 task_t* cur_task_handle = &tasks[0];
 task_t* next_task_handle = &tasks[0];
 
 void task_yield(void) {
-    cur_task = (cur_task + 1) % num_tasks;
-    next_task_handle = &tasks[cur_task];
-    SCB_ICSR = (1 << 28);
+    if (scheduler_running != 0) {
+        cur_task = (cur_task + 1) % num_tasks;
+        next_task_handle = &tasks[cur_task];
+        SCB_ICSR = (1 << 28);
+    } 
 }
 
 void task_init(task_t* task_handle, uint32_t* stack_handle, void (*task_func)(void)) {
@@ -41,5 +44,6 @@ void task_create(void (*task_func)(void)) {
 }
 
 void begin_tasks(void) {
+    scheduler_running = 1;
     __asm volatile ("svc #0");
 }

@@ -11,7 +11,6 @@ void taskA(void)
     while (1) {
         uart_write_str("A\r\n");
         delay_ms(100);
-        task_yield();
     }
 }
 
@@ -20,7 +19,6 @@ void taskB(void)
     while (1) {
         uart_write_str("B\r\n");
         delay_ms(100);
-        task_yield();
     }
 }
 
