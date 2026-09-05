@@ -1,6 +1,8 @@
 #include "cortex_m4.h"
 #include "systick.h"
 
+#define TIME_QUANTUM_MS 10
+
 volatile uint32_t systick_ms = 0;
 
 extern void task_yield(void);
@@ -14,7 +16,7 @@ void SysTick_Init(void) {
 void SysTick_Handler(void)
 {
     systick_ms++;
-    task_yield();
+    if (systick_ms % TIME_QUANTUM_MS == 0) task_yield();
 }
 
 void delay_ms(uint32_t delay_length_ms) {
