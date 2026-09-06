@@ -6,7 +6,68 @@
 #include "pendsv.h"
 #include <stdint.h>
 
-void int_to_str(int32_t value, char *buf) {
+static void int_to_str(int32_t value, char *buf);
+
+void taskA(void) {
+    int x = 0;
+    while (1) {
+        x++;
+        uart_write_str("A\r\n");
+        char num[11];
+        int_to_str(x, num);
+        uart_write_str(num);
+        uart_write_str("\r\n");
+        task_sleep(100);
+    }
+}
+
+void taskB(void) {
+    int x = 1000;
+    while (1) {
+        x++;
+        uart_write_str("B\r\n");
+        char num[11];
+        int_to_str(x, num);
+        uart_write_str(num);
+        uart_write_str("\r\n");
+        task_sleep(500);
+    }
+}
+
+void taskC(void) {
+    int x = 10000;
+    while (1) {
+        x++;
+        uart_write_str("C\r\n");
+        char num[11];
+        int_to_str(x, num);
+        uart_write_str(num);
+        uart_write_str("\r\n");
+        task_sleep(1000);
+    }
+}
+
+int main(void) {
+    LED_Init();
+    SysTick_Init();
+    USART2_Init();
+    PendSV_Init();
+
+    uart_write_str("Creating tasks...\r\n\n");
+
+    delay_ms(500);
+
+    task_create(taskA);
+    task_create(taskB);
+    task_create(taskC);
+
+    begin_tasks();
+
+    while(1) {}
+}
+
+// utility
+static void int_to_str(int32_t value, char *buf) {
     char tmp[11];
     int i = 0;
     int j = 0;
@@ -37,62 +98,4 @@ void int_to_str(int32_t value, char *buf) {
     }
 
     buf[j] = '\0';
-}
-
-void taskA(void) {
-    int x = 0;
-    while (1) {
-        x++;
-        uart_write_str("A\r\n");
-        char num[11];
-        int_to_str(x, num);
-        uart_write_str(num);
-        uart_write_str("\r\n");
-        delay_ms(100);
-    }
-}
-
-void taskB(void) {
-    int x = 1000;
-    while (1) {
-        x++;
-        uart_write_str("B\r\n");
-        char num[11];
-        int_to_str(x, num);
-        uart_write_str(num);
-        uart_write_str("\r\n");
-        delay_ms(100);
-    }
-}
-
-void taskC(void) {
-    int x = 10000;
-    while (1) {
-        x++;
-        uart_write_str("C\r\n");
-        char num[11];
-        int_to_str(x, num);
-        uart_write_str(num);
-        uart_write_str("\r\n");
-        delay_ms(100);
-    }
-}
-
-int main(void) {
-    LED_Init();
-    SysTick_Init();
-    USART2_Init();
-    PendSV_Init();
-
-    uart_write_str("Creating tasks...\r\n\n");
-
-    delay_ms(500);
-
-    task_create(taskA);
-    task_create(taskB);
-    task_create(taskC);
-
-    begin_tasks();
-
-    while(1) {}
 }

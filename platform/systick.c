@@ -5,7 +5,7 @@
 
 volatile uint32_t systick_ms = 0;
 
-extern void task_yield(void);
+extern void task_schedule_next(void);
 
 void SysTick_Init(void) {
     SYSTICK_CURRENT = 0;
@@ -16,7 +16,7 @@ void SysTick_Init(void) {
 void SysTick_Handler(void)
 {
     systick_ms++;
-    if (systick_ms % TIME_QUANTUM_MS == 0) task_yield();
+    if (systick_ms % TIME_QUANTUM_MS == 0) task_schedule_next();
 }
 
 void delay_ms(uint32_t delay_length_ms) {
