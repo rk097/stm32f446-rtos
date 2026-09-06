@@ -9,6 +9,7 @@ typedef enum {
     TASK_BLOCKED
 } task_state_t;
 
+// asm assumes sp is at pos 0
 typedef struct {
     uint32_t* sp;
     task_state_t state;
@@ -17,7 +18,6 @@ typedef struct {
 
 void task_create(void (*task_func)(void));
 void task_init(task_t* task_handle, uint32_t* stack_handle, void (*task_func)(void));
-void task_yield(void);
 void task_schedule_next(void);
 void task_sleep(uint32_t ms);
 

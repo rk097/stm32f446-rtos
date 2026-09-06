@@ -31,7 +31,7 @@ void task_schedule_next(void) {
 
         // free any blocked tasks that are ready
         for (int i = 0; i < num_tasks; i++) {
-            if (tasks[i].state == TASK_BLOCKED && systick_ms >= tasks[i].wake_tick) tasks[i].state = TASK_READY;
+            if (tasks[i].state == TASK_BLOCKED && systick_ms - tasks[i].wake_tick >= 0) tasks[i].state = TASK_READY;
             if (tasks[i].state == TASK_READY) num_runnable++;
         }
 
@@ -64,14 +64,6 @@ void task_sleep(uint32_t ms) {
     tasks[cur_task].state = TASK_BLOCKED;
     tasks[cur_task].wake_tick = systick_ms + ms;
     task_schedule_next();
-}
-
-void task_yield(void) {
-    if (scheduler_running != 0) {
-        cur_task = (cur_task + 1) % num_tasks;
-        next_task_handle = &tasks[cur_task];
-        SCB_ICSR = (1 << 28);
-    } 
 }
 
 void task_init(task_t* task_handle, uint32_t* stack_handle, void (*task_func)(void)) {
