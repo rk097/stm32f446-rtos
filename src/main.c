@@ -42,6 +42,8 @@ void consumer_task(void) {
         uart_write_str(num);
         uart_write_str("\r\n");
 
+        task_sleep(2000);
+
         bin_semaphore_post(&buffer_free);
     }
 }
