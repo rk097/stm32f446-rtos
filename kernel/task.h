@@ -4,8 +4,10 @@
 #include <stdint.h>
 
 // no running, current task is implicitly running
+// sleeping distinguished from blocked on semaphore
 typedef enum {
     TASK_READY,
+    TASK_SLEEPING,
     TASK_BLOCKED
 } task_state_t;
 

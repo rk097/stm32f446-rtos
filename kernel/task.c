@@ -29,9 +29,9 @@ void task_schedule_next(void) {
     if (scheduler_running) {
         int num_runnable = 0;
 
-        // free any blocked tasks that are ready
+        // wake any sleeped tasks that are ready
         for (int i = 0; i < num_tasks; i++) {
-            if (tasks[i].state == TASK_BLOCKED && systick_ms - tasks[i].wake_tick >= 0) tasks[i].state = TASK_READY;
+            if (tasks[i].state == TASK_SLEEPING && (int32_t)(systick_ms - tasks[i].wake_tick) >= 0) tasks[i].state = TASK_READY;
             if (tasks[i].state == TASK_READY) num_runnable++;
         }
 
@@ -61,7 +61,7 @@ void task_schedule_next(void) {
 
 // sleep current task.
 void task_sleep(uint32_t ms) {
-    tasks[cur_task].state = TASK_BLOCKED;
+    tasks[cur_task].state = TASK_SLEEPING;
     tasks[cur_task].wake_tick = systick_ms + ms;
     task_schedule_next();
 }

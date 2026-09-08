@@ -15,6 +15,9 @@ add_executable(firmware
     kernel/task.c
     kernel/context.S
     kernel/pendsv.c
+    kernel/irq.S
+    kernel/semaphore.c
+    src/util.c
 )
 
 target_compile_options(firmware PRIVATE

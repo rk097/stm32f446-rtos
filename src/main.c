@@ -4,45 +4,51 @@
 #include "nucleo.h"
 #include "task.h"
 #include "pendsv.h"
+#include "semaphore.h"
 #include <stdint.h>
 
-static void int_to_str(int32_t value, char *buf);
+static bin_semaphore_t data_ready; // producer to consumer
+static bin_semaphore_t buffer_free; // for uart buffer
+static volatile uint32_t sample;
 
-void taskA(void) {
-    int x = 0;
-    while (1) {
-        x++;
-        uart_write_str("A\r\n");
-        char num[11];
-        int_to_str(x, num);
-        uart_write_str(num);
-        uart_write_str("\r\n");
-        task_sleep(100);
-    }
-}
+extern void int_to_str(int32_t value, char *buf);
 
-void taskB(void) {
-    int x = 1000;
+void producer_task(void) {
+    uint32_t value = 0;
+
     while (1) {
-        x++;
-        uart_write_str("B\r\n");
-        char num[11];
-        int_to_str(x, num);
-        uart_write_str(num);
-        uart_write_str("\r\n");
+        bin_semaphore_wait(&buffer_free);
+
+        sample = value++;
+
+        uart_write_str("Producer: sample generated\r\n");
+
+        bin_semaphore_post(&data_ready);
+
         task_sleep(500);
     }
 }
 
-void taskC(void) {
-    int x = 10000;
+void consumer_task(void) {
     while (1) {
-        x++;
-        uart_write_str("C\r\n");
+        bin_semaphore_wait(&data_ready);
+
+        uint32_t value = sample;
+
         char num[11];
-        int_to_str(x, num);
+        int_to_str(value, num);
+
+        uart_write_str("Consumer: sample processed\r\nValue: ");
         uart_write_str(num);
         uart_write_str("\r\n");
+
+        bin_semaphore_post(&buffer_free);
+    }
+}
+
+void heartbeat_task(void) {
+    while (1) {
+        led_toggle();
         task_sleep(1000);
     }
 }
@@ -52,50 +58,18 @@ int main(void) {
     SysTick_Init();
     USART2_Init();
     PendSV_Init();
+    bin_semaphore_init(&data_ready, 0);   // no sample initially
+    bin_semaphore_init(&buffer_free, 1);  // producer may write immediately
 
     uart_write_str("Creating tasks...\r\n\n");
 
     delay_ms(500);
 
-    task_create(taskA);
-    task_create(taskB);
-    task_create(taskC);
+    task_create(producer_task);
+    task_create(consumer_task);
+    task_create(heartbeat_task);
 
     begin_tasks();
 
     while(1) {}
-}
-
-// utility
-static void int_to_str(int32_t value, char *buf) {
-    char tmp[11];
-    int i = 0;
-    int j = 0;
-    uint32_t magnitude;
-
-    if (value < 0) {
-        buf[j++] = '-';
-
-        // Avoid overflow for INT32_MIN
-        magnitude = (uint32_t)(-(value + 1)) + 1;
-    } else {
-        magnitude = (uint32_t)value;
-    }
-
-    if (magnitude == 0) {
-        buf[j++] = '0';
-        buf[j] = '\0';
-        return;
-    }
-
-    while (magnitude > 0) {
-        tmp[i++] = '0' + (magnitude % 10);
-        magnitude /= 10;
-    }
-
-    while (i > 0) {
-        buf[j++] = tmp[--i];
-    }
-
-    buf[j] = '\0';
 }
