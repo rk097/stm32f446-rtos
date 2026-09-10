@@ -1,8 +1,9 @@
 #ifndef SEMAPHORE_H
 #define SEMAPHORE_H
 
-#include "task.h"
 #include <stdint.h>
+
+typedef struct task task_t;
 
 typedef struct {
     uint8_t available;

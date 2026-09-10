@@ -1,4 +1,5 @@
 #include "semaphore.h"
+#include "task.h"
 #include <stddef.h>
 
 extern uint32_t irq_save(void);

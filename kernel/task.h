@@ -12,7 +12,7 @@ typedef enum {
 } task_state_t;
 
 // asm assumes sp is at pos 0
-typedef struct {
+typedef struct task {
     uint32_t* sp;
     task_state_t state;
     uint32_t wake_tick;
