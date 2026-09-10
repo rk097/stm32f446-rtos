@@ -16,36 +16,55 @@ extern void int_to_str(int32_t value, char *buf);
 void producer_task(void) {
     uint32_t value = 0;
 
+    // Let both consumers block on data_ready first.
+    task_sleep(500);
+
     while (1) {
         bin_semaphore_wait(&buffer_free);
 
         sample = value++;
 
-        uart_write_str("Producer: sample generated\r\n");
+        uart_write_str("Producer: generated ");
+
+        char num[11];
+        int_to_str(sample, num);
+        uart_write_str(num);
+        uart_write_str("\r\n");
 
         bin_semaphore_post(&data_ready);
 
-        task_sleep(500);
+        task_sleep(250);
     }
 }
 
-void consumer_task(void) {
+static void consumer(const char *name) {
     while (1) {
         bin_semaphore_wait(&data_ready);
 
         uint32_t value = sample;
 
+        // Free the shared sample slot once we've copied it locally.
+        bin_semaphore_post(&buffer_free);
+
         char num[11];
         int_to_str(value, num);
 
-        uart_write_str("Consumer: sample processed\r\nValue: ");
+        uart_write_str("Consumer ");
+        uart_write_str(name);
+        uart_write_str(": processed ");
         uart_write_str(num);
         uart_write_str("\r\n");
 
-        task_sleep(2000);
-
-        bin_semaphore_post(&buffer_free);
+        task_sleep(1000);
     }
+}
+
+void consumer_a_task(void) {
+    consumer("A");
+}
+
+void consumer_b_task(void) {
+    consumer("B");
 }
 
 void heartbeat_task(void) {
@@ -68,7 +87,8 @@ int main(void) {
     delay_ms(500);
 
     task_create(producer_task);
-    task_create(consumer_task);
+    task_create(consumer_a_task);
+    task_create(consumer_b_task);
     task_create(heartbeat_task);
 
     begin_tasks();

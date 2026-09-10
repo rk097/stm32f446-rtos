@@ -1,9 +1,7 @@
 #include "task.h"
+#include "config.h"
 #include "cortex_m4.h"
 
-void task_exit(void) {}
-
-#define MAX_TASKS 4
 #define STACK_SIZE 256
 
 static task_t tasks[MAX_TASKS+1];
@@ -72,7 +70,7 @@ void task_init(task_t* task_handle, uint32_t* stack_handle, void (*task_func)(vo
     // initial fake hardware context
     *--sp = 0x01000000; // xPSR with thumb bit
     *--sp = (uint32_t)task_func;
-    *--sp = (uint32_t)task_exit;
+    *--sp = (uint32_t)idle_task;
     *--sp = 0xdeadbeef; // r12
     for (int i = 3; i >= 0; i--) *--sp = 0; // r3...r0
 
