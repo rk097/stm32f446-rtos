@@ -2,6 +2,24 @@
 
 A from-scratch Cortex-M4 runtime and RTOS targeting the STM32F446RE.
 
+### Architecture Diagram
+
+![Diagram](/docs/diagram.png)
+
+### Feature List
+
+per-task stacks, SysTick scheduling, PendSV context switching, sleep/blocking, binary semaphores, UART driver, idle task, SysTick system delay
+
+### Key Learnings
+
+- Toolchain/environment setup for baremetal development of STM32 without CubeMX. (Used VS Code with C/C++ Intellisense, CMake, Ninja, and the open source ST-Link)
+- Compilation and linkage from command line for baremetal target using arm-none-eabi-gcc, simple linker script based on RAM/FLASH size of STM32F446RE, and Reset_Handler with custom vector table ordered according to ARM Cortex-M4 spec and STM32F446 datasheet
+- Developing baremetal drivers for GPIO and UART using register operations (register write, register read-and-writeback depending on the register)
+- Interrupt-driven UART with async transmit/receive via ringbuffers on both ends, enabling interrupt both in STM32 register and NVIC
+- Usage of PSP vs MSP; Thread vs Handler mode; manually toggling CONTROL.SPSEL vs taking advantage of EXEC_RETURN; context switching using PendSV as per ARM Cortex-M4's specifications
+- Cooperative yielding vs preemption using SysTick interrupt; task sleeps; task scheduling using states, and task management with task stacks and stack pointers in an RTOS style
+- Implementation of a binary semaphore; disabling IRQs to allow for critical paths in code
+
 ## Important References
 
 [STM32F446 Reference Manual](https://www.st.com/en/microcontrollers-microprocessors/stm32f446/documentation.html#)
